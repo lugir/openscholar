@@ -1093,11 +1093,34 @@ function os_events_views_pre_view(&$view, &$display_id, &$args) {
     return;
   }
 
+  if ($args[1] == 'export-to-google') {
+    $params = array(
+      'Summary' => 'Calendar',
+      'Description' => 'OpenScholar Test Calendar',
+      'TimeZone' => 'America/Los_Angeles',
+      'Location' => 'New York',
+    );
+
+    $account_name = "OpenScholarGAuth";
+    $by_name = true;
+
+    # FIXME:
+    #       this function is redirecting to admin/config/services/gauth_account,
+    #       but needs to go to e.g., calendar/upcoming/all/export-calendar-to-google
+    gauth_account_authenticate($account_name, $by_name);
+
+    $is_authenticated = gauth_account_is_authenticated($account_name, $by_name);
+
+    $cal = gcal_calendar_create($params, $account_name);
+    return;
+  }
+
   if (!in_array($display_id, array('block_2', 'block_1'))) {
     $buttons = array(
       'subscribe' => 'calendar/upcoming/all/export.ics',
       'iCal' => 'calendar/upcoming/all/export.ics',
-      'rss' => 'calendar/upcoming/all/rss.xml'
+      'rss' => 'calendar/upcoming/all/rss.xml',
+      'Google' => 'calendar/upcoming/all/export-to-google'
     );
 
     foreach ($buttons as $label => $path) {
