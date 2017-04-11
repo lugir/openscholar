@@ -616,3 +616,8 @@ libraries[jsonp][download][url] = "https://raw.githubusercontent.com/yui/yui3/v3
 libraries[yql-jsonp][type] = "libraries"
 libraries[yql-jsonp][download][type] = "file"
 libraries[yql-jsonp][download][url] = "https://raw.githubusercontent.com/yui/yui3/v3.18.1/build/yql-jsonp/yql-jsonp-min.js"
+
+libraries[google_php_client_library][type] = "libraries"
+libraries[google_php_client_library][download][type] = "file"
+libraries[google_php_client_library][download][url] = "https://ftp.drupal.org/files/projects/google_php_client_library-7.x-1.0-rc1.zip"
+libraries[google_php_client_library][patch][] = "TBD"
