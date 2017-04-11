@@ -78,6 +78,38 @@ function os_events_settings() {
   return system_settings_form($form);
 }
 
+function os_events_gauth_account_authenticate() {
+
+  $account_name = variable_get('gauth_account_name', 'OpenScholarGAuth');
+  $by_name = true;
+
+  gauth_account_authenticate($account_name, $by_name);
+}
+
+function os_events_gcal_create_calendar() {
+
+  $account_name = variable_get('gauth_account_name', 'OpenScholarGAuth');
+  $by_name = true;
+
+  $is_authenticated = gauth_account_is_authenticated($account_name, $by_name);
+
+  # FIXME: set these from vsite calendar
+  $params = array(
+    'Summary' => 'Calendar',
+    'Description' => 'OpenScholar Test Calendar',
+    'TimeZone' => 'America/Los_Angeles',
+    'Location' => 'New York',
+  );
+
+  $cal = gcal_calendar_create($params, $account_name);
+
+  $form = array();
+  $form['os_events_export_to_google'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Export calendar to Google Calendar')
+  );
+}
+
 /**
  * Helper function to send notification emails to event registrants if there is any cancellations or change in event timings.
  *
@@ -285,6 +317,21 @@ function os_events_menu() {
     'title' => 'Event Settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('os_events_settings'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['calendar/gauth-account-authenticate'] = array(
+    'title' => 'Google Authenticate',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os_events_gauth_account_authenticate'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['calendar/gcal-create-calendar'] = array(
+    'title' => 'Create Calendar on Google',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os_events_gcal_create_calendar'),
     'access arguments' => array('administer site configuration'),
     'type' => MENU_CALLBACK,
   );
@@ -1120,7 +1167,7 @@ function os_events_views_pre_view(&$view, &$display_id, &$args) {
       'subscribe' => 'calendar/upcoming/all/export.ics',
       'iCal' => 'calendar/upcoming/all/export.ics',
       'rss' => 'calendar/upcoming/all/rss.xml',
-      'Google' => 'calendar/upcoming/all/export-to-google'
+      'Google' => 'calendar/gauth-account-authenticate'
     );
 
     foreach ($buttons as $label => $path) {
