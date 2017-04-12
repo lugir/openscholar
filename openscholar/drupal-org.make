@@ -154,10 +154,10 @@ projects[flag][subdir] = "contrib"
 projects[flag][version] = 2.0
 
 projects[gcal] = "contrib"
-projects[gcal][version] = 7.x-1.0-rc2
+projects[gcal][version] = 1.0-rc2
 
 projects[gauth] = "contrib"
-projects[gauth][version] = 7.x-1.9
+projects[gauth][version] = 1.9
 
 projects[hierarchical_taxonomy][subdir] = "contrib"
 projects[hierarchical_taxonomy][download][type] = git
