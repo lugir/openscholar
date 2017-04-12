@@ -96,18 +96,40 @@ function os_events_gcal_create_calendar() {
   # FIXME: set these from vsite calendar
   $params = array(
     'Summary' => 'Calendar',
-    'Description' => 'OpenScholar Test Calendar',
-    'TimeZone' => 'America/Los_Angeles',
-    'Location' => 'New York',
+    'Description' => 'OpenScholar Exported Calendar',
+    'TimeZone' => 'America/New_York',
+    'Location' => 'Cambridge, MA',
   );
+
+  $name = "os_events";
+  $display_id = "feed_2";
+  $args = array();
+
+  // Load the view so we can iterate over it's results
+  if ($view = views_get_view($name)) {
+    $view->execute_display($display_id, $args);
+  }
 
   $cal = gcal_calendar_create($params, $account_name);
 
-  $form = array();
-  $form['os_events_export_to_google'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Export calendar to Google Calendar')
-  );
+  foreach ($view->result as $e) {
+    $event = array();
+    $event['Description'] = $e->_field_data['nid']['entity']->body[LANGUAGE_NONE][0]['value'];
+    $event['Start']       = $e->_field_data['nid']['entity']->field_date[LANGUAGE_NONE][0]['value'];
+    $event['End']         = $e->_field_data['nid']['entity']->field_date[LANGUAGE_NONE][0]['value2'];
+    $event['Location']    = $e->_field_data['nid']['entity']->field_event_location[LANGUAGE_NONE][0]['value'];
+    $event['Summary']     = $e->_field_data['nid']['entity']->title;
+    $event['Timezone']    = $e->_field_data['nid']['entity']->field_date[LANGUAGE_NONE][0]['timezone'];
+
+    $return = gcal_event_create($event, $cal->id, $account_name, $by_name);
+
+    if (!$return) {
+      drupal_set_message("Couldn't add event to new Google Calendar: " . $event['Description'], 'Error');
+    }
+  }
+
+  drupal_set_message("Calendar export completed", 'Success');
+  drupal_goto('/calendar');
 }
 
 /**
