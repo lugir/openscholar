@@ -1,6 +1,8 @@
 <?php
 // $Id$
 
+include_once dirname(__FILE__) . "/../../../../www/sites/all/libraries/google-api-php-client/autoload.php";
+
 include_once 'os_events.features.inc';
 
 /**
@@ -92,6 +94,9 @@ function os_events_gcal_create_calendar() {
   $by_name = true;
 
   $is_authenticated = gauth_account_is_authenticated($account_name, $by_name);
+  if (!$is_authenticated) {
+    drupal_goto('calendar/gauth-account-authenticate');
+  }
 
   # FIXME: set these from vsite calendar
   $params = array(
@@ -1189,7 +1194,7 @@ function os_events_views_pre_view(&$view, &$display_id, &$args) {
       'subscribe' => 'calendar/upcoming/all/export.ics',
       'iCal' => 'calendar/upcoming/all/export.ics',
       'rss' => 'calendar/upcoming/all/rss.xml',
-      'Google' => 'calendar/gauth-account-authenticate'
+      'Google' => 'calendar/gcal-create-calendar'
     );
 
     foreach ($buttons as $label => $path) {
