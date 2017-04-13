@@ -1,5 +1,5 @@
---- ./www/sites/all/libraries/google-api-php-client/src/Google/Auth/OAuth2.php
-+++ ./www/sites/all/libraries/google-api-php-client/src/Google/Auth/OAuth2.php
+--- src/Google/Auth/OAuth2.php
++++ src/Google/Auth/OAuth2.php
 @@ -179,8 +179,10 @@
     * @param string $token
     * @throws Google_Auth_Exception
