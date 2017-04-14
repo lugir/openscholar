@@ -619,5 +619,4 @@ libraries[yql-jsonp][download][url] = "https://raw.githubusercontent.com/yui/yui
 
 libraries[google_php_client_library][type] = "libraries"
 libraries[google_php_client_library][download][type] = "file"
-libraries[google_php_client_library][download][url] = "https://ftp.drupal.org/files/projects/google_php_client_library-7.x-1.0-rc1.zip"
-libraries[google_php_client_library][patch][] = "https://raw.githubusercontent.com/openscholar/openscholar/3a7ed652d3573612aa7826a0628e763a0433e24f/patches/google-api-php-client.fix-json_decode.patch"
+libraries[google_php_client_library][download][url] = "https://github.com/google/google-api-php-client/archive/master.zip"

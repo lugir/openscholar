@@ -93,6 +93,7 @@ CUR_DIR=$(pwd)
   if [ -n "$OPSDIR" ] && [ -d $BUILD_ROOT/$DOCROOT/$OPSDIR ] ; then
     cd $BUILD_ROOT/$DOCROOT/$OPSDIR
     $DRUSH make --no-core --contrib-destination $CUR_DIR/$BUILD_ROOT/openscholar/os-ops.make .
+    $DRUSH google-get-api
     cd $CUR_DIR
   fi
 )
