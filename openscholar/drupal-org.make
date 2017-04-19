@@ -619,4 +619,4 @@ libraries[yql-jsonp][download][url] = "https://raw.githubusercontent.com/yui/yui
 
 libraries[google_php_client_library][type] = "libraries"
 libraries[google_php_client_library][download][type] = "file"
-libraries[google_php_client_library][download][url] = "https://github.com/google/google-api-php-client/archive/master.zip"
+libraries[google_php_client_library][download][url] = "https://github.com/google/google-api-php-client/releases/download/v2.1.3/google-api-php-client-2.1.3.zip"
