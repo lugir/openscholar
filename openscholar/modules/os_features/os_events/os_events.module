@@ -80,7 +80,7 @@ function os_events_settings() {
 
 function os_events_gauth_account_authenticate() {
 
-  $account_name = variable_get('gauth_account_name', 'OpenScholarGAuth');
+  $account_name = variable_get('gauth_account_name', '');
   $by_name = true;
 
   gauth_account_authenticate($account_name, $by_name);
@@ -88,7 +88,7 @@ function os_events_gauth_account_authenticate() {
 
 function os_events_gcal_create_calendar() {
 
-  $account_name = variable_get('gauth_account_name', 'OpenScholarGAuth');
+  $account_name = variable_get('gauth_account_name', '');
   $by_name = true;
 
   $is_authenticated = gauth_account_is_authenticated($account_name, $by_name);
