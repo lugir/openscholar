@@ -96,12 +96,18 @@ function os_events_gcal_create_calendar() {
     drupal_goto('calendar/gauth-account-authenticate');
   }
 
-  # FIXME: set these from vsite calendar
+  # Collect calendar info
+  $vsite = vsite_get_vsite();
+  $calendar_summary     = isset($vsite->group->title) ? $vsite->group->title : "OpenScholar Calendar";
+  $calendar_description = isset($vsite->group->field_site_description[LANGUAGE_NONE][0]['safe_value']) ? $vsite->group->field_site_description[LANGUAGE_NONE][0]['safe_value'] : "";
+  $calendar_location    = isset($vsite->group->field_site_address[LANGUAGE_NONE][0]['value']) ? $vsite->group->field_site_address[LANGUAGE_NONE][0]['value'] : "";
+  $calendar_timezone    = isset($vsite->controllers->variable->values['original']['date_default_timezone']) ? $vsite->controllers->variable->values['original']['date_default_timezone'] : "America/New_York";
+
   $params = array(
-    'Summary' => 'Calendar',
-    'Description' => 'OpenScholar Exported Calendar',
-    'TimeZone' => 'America/New_York',
-    'Location' => 'Cambridge, MA',
+    'Summary'     => $calendar_summary,
+    'Description' => $calendar_description,
+    'TimeZone'    => $calendar_timezone,
+    'Location'    => $calendar_location,
   );
 
   $name = "os_events";
