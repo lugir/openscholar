@@ -124,8 +124,5 @@ CUR_DIR=$(pwd)
 
 # Relocate Google API PHP library, so it's detected by libraries_load()
 (
-  cp -R ./openscholar/libraries/google-api-php-client/ www/sites/all/libraries/
-  cd $BUILD_ROOT/www/sites/all/libraries/google-api-php-client
-  composer install
-  cd $BUILD_ROOT
+  cp -R ./openscholar/libraries/google-api-php-client www/sites/all/libraries/
 )
