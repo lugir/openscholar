@@ -158,7 +158,7 @@ projects[gcal][version] = 1.0-rc2
 
 projects[gauth] = "contrib"
 projects[gauth][version] = 1.9
-projects[gauth][patch][] = "TBD"
+projects[gauth][patch][] = "https://raw.githubusercontent.com/openscholar/openscholar/aa9c764e5b4d6f79ea2059ed6c299ba7a635d593/patches/gauth-set_line_number_of_version_string.patch"
 
 projects[hierarchical_taxonomy][subdir] = "contrib"
 projects[hierarchical_taxonomy][download][type] = git
