@@ -121,8 +121,3 @@ CUR_DIR=$(pwd)
   $BOWER install
   cd -
 )
-
-# Relocate Google API PHP library, so it's detected by libraries_load()
-(
-  cp -R ./openscholar/libraries/google-api-php-client www/sites/all/libraries/
-)
