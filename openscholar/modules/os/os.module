@@ -2333,6 +2333,9 @@ function os_library_alter(&$libraries) {
  */
 function os_libraries_info_alter(&$libraries) {
   $libraries['autopager']['callbacks']['post-load'][] = 'os_libraries_autopager_add_js';
+
+  // Composer doesn't install this library as expected, so make an adjustment
+  $libraries['google-api-php-client']['library path'] = "../openscholar/libraries/git";
 }
 
 /**

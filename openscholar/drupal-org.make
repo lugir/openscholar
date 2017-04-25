@@ -158,6 +158,7 @@ projects[gcal][version] = 1.0-rc2
 
 projects[gauth] = "contrib"
 projects[gauth][version] = 1.9
+projects[gauth][patch][] = "TBD"
 
 projects[hierarchical_taxonomy][subdir] = "contrib"
 projects[hierarchical_taxonomy][download][type] = git
