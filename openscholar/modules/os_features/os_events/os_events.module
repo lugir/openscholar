@@ -1176,8 +1176,13 @@ function os_events_views_pre_view(&$view, &$display_id, &$args) {
       'subscribe' => 'calendar/upcoming/all/export.ics',
       'iCal' => 'calendar/upcoming/all/export.ics',
       'rss' => 'calendar/upcoming/all/rss.xml',
-      'Google' => 'calendar/gcal-create-calendar'
     );
+
+    # Show the Google export button, if we have a Google API account
+    $have_google_account = variable_get('gauth_account_name', false);
+    if ($have_google_account) {
+      $buttons['Google'] = 'calendar/gcal-create-calendar';
+    }
 
     foreach ($buttons as $label => $path) {
       // When the user is filtering events by taxonomy term we need to add the
