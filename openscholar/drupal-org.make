@@ -153,10 +153,10 @@ projects[filefield_paths][download][revision] = 84fb637
 projects[flag][subdir] = "contrib"
 projects[flag][version] = 2.0
 
-projects[gcal] = "contrib"
+projects[gcal][subdir] = "contrib"
 projects[gcal][version] = 1.0-rc2
 
-projects[gauth] = "contrib"
+projects[gauth][subdir] = "contrib"
 projects[gauth][version] = 1.9
 projects[gauth][patch][] = "https://raw.githubusercontent.com/openscholar/openscholar/aa9c764e5b4d6f79ea2059ed6c299ba7a635d593/patches/gauth-set_line_number_of_version_string.patch"
 
