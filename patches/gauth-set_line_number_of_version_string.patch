@@ -1,11 +1,15 @@
 --- /gauth.module
 +++ /gauth.module
-@@ -110,7 +110,7 @@
+@@ -108,9 +108,9 @@
+   $include_path = 'vendor/autoload.php';
+   $line_number = 42;
    if (!file_exists(DRUPAL_ROOT . '/' . $lib_path . '/vendor')) { // Composer install;
-     $file_path = 'google/apiclient/src/Google/Client.php';
+-    $file_path = 'google/apiclient/src/Google/Client.php';
++    # $file_path = 'google/apiclient/src/Google/Client.php';
      $include_path = 'autoload.php';
 -    $line_number = 40;
 +    $line_number = 50;
    }
    $libraries['google-api-php-client'] = array(
      'name' => 'Google OAuth2 Library',
+
