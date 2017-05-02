@@ -2336,9 +2336,8 @@ function os_libraries_info_alter(&$libraries) {
 
   // Ensure the Google API library loads properly
   $libraries['google-api-php-client']['files']['php'][0] = './src/Google/autoload.php';
-
-  // Let libraries.module set the library path based on machine_name
-  unset($libraries['google-api-php-client']['library path']);
+  $libraries['google-api-php-client']['version arguments']['file'] = 'src/Google/Client.php';
+  $libraries['google-api-php-client']['version arguments']['lines'] = 50;
 }
 
 /**
