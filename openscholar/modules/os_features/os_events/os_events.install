@@ -319,6 +319,5 @@ function os_events_update_7026() {
  * Enable Google OAuth and Calendar modules for exporting to Google
  */
 function os_events_update_7027() {
-  module_enable(array('gauth'));
-  module_enable(array('gcal'));
+  module_enable(array('gauth', 'gcal'));
 }
