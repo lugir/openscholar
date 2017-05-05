@@ -110,6 +110,8 @@ git commit -a -m "Make File Update."
 else
 #Copy unmakable modules, when we don’t build
 cp -R openscholar/temporary/* openscholar/openscholar/modules/contrib/
+# Verification for Google API
+echo google-site-verification: googled19240dfd5fa8817.html > googled19240dfd5fa8817.html
 git commit -a -m "Update Temporary Modules." || echo 'Nothing to commit.'
 fi
 git push origin $CI_BRANCH
@@ -217,5 +219,7 @@ else
 	cp -R openscholar/temporary/* openscholar/openscholar/modules/contrib/
 	git commit -a -m "Update Temporary Modules."  || echo 'Nothing to commit.'
 fi
+# Verification for Google API
+echo google-site-verification: googled19240dfd5fa8817.html > googled19240dfd5fa8817.html
 git push origin $CI_BRANCH
 echo "FINISHED BUILDING $CI_BRANCH ON HWPI2"
