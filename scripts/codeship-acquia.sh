@@ -90,6 +90,8 @@ rm -Rf $BUILD_ROOT/$DOCROOT || true
 rm -Rf $BUILD_ROOT/www-build/install.php || true
 # Restore updated site.
 mv $BUILD_ROOT/www-build $BUILD_ROOT/$DOCROOT
+# Verification for Google API
+echo google-site-verification: googled19240dfd5fa8817.html > $BUILD_ROOT/$DOCROOT/googled19240dfd5fa8817.html
 # Add New Files to repo and commit changes
 git add --all $BUILD_ROOT/$DOCROOT
 #Copy unmakable modules
@@ -110,11 +112,6 @@ git commit -a -m "Make File Update."
 else
 #Copy unmakable modules, when we don’t build
 cp -R openscholar/temporary/* openscholar/openscholar/modules/contrib/
-# Verification for Google API
-echo google-site-verification: googled19240dfd5fa8817.html > googled19240dfd5fa8817.html
-git add googled19240dfd5fa8817.html
-git commit -am "Verify server for Google"
-git commit -a -m "Update Temporary Modules." || echo 'Nothing to commit.'
 fi
 git push origin $CI_BRANCH
 echo -e "\033[1;36mFINISHED BUILDING $CI_BRANCH ON HWPI1\e[0m"
@@ -195,6 +192,8 @@ rm -Rf $BUILD_ROOT/$DOCROOT || true
 rm -Rf $BUILD_ROOT/www-build/install.php || true
 # Restore updated site.
 mv $BUILD_ROOT/www-build $BUILD_ROOT/$DOCROOT
+# Verification for Google API
+echo google-site-verification: googled19240dfd5fa8817.html > $BUILD_ROOT/$DOCROOT/googled19240dfd5fa8817.html
 # Add New Files to repo and commit changes
 git add --all $BUILD_ROOT/$DOCROOT
 #Copy unmakable modules
@@ -221,9 +220,5 @@ else
 	cp -R openscholar/temporary/* openscholar/openscholar/modules/contrib/
 	git commit -a -m "Update Temporary Modules."  || echo 'Nothing to commit.'
 fi
-# Verification for Google API
-echo google-site-verification: googled19240dfd5fa8817.html > googled19240dfd5fa8817.html
-git add googled19240dfd5fa8817.html
-git commit -am "Verify server for Google"
 git push origin $CI_BRANCH
 echo "FINISHED BUILDING $CI_BRANCH ON HWPI2"
