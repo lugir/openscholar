@@ -113,6 +113,7 @@ cp -R openscholar/temporary/* openscholar/openscholar/modules/contrib/
 # Verification for Google API
 echo google-site-verification: googled19240dfd5fa8817.html > googled19240dfd5fa8817.html
 git add googled19240dfd5fa8817.html
+git commit -am "Verify server for Google"
 git commit -a -m "Update Temporary Modules." || echo 'Nothing to commit.'
 fi
 git push origin $CI_BRANCH
@@ -223,5 +224,6 @@ fi
 # Verification for Google API
 echo google-site-verification: googled19240dfd5fa8817.html > googled19240dfd5fa8817.html
 git add googled19240dfd5fa8817.html
+git commit -am "Verify server for Google"
 git push origin $CI_BRANCH
 echo "FINISHED BUILDING $CI_BRANCH ON HWPI2"
