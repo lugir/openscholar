@@ -78,23 +78,126 @@ function os_events_settings() {
   return system_settings_form($form);
 }
 
-function os_events_gauth_account_authenticate() {
+/**
+ * Returns an authorized API client.
+ * @return Google_Client the authorized client object
+ */
+function getClient() {
 
-  $account_name = variable_get('gauth_account_name', '');
-  $by_name = true;
+  define('APPLICATION_NAME', "OpenScholar Calendar Exporter");
+  define('CLIENT_SECRET_PATH', tempnam(sys_get_temp_dir(), "google_client_secret"));
+  define('CREDENTIALS_PATH', tempnam(sys_get_temp_dir(), "google_credentials"));
 
-  gauth_account_authenticate($account_name, $by_name);
+  $google_client_secret = variable_get('google_client_secret');
+  $google_credentials = variable_get('google_credentials');
+  file_put_contents(CLIENT_SECRET_PATH, $google_client_secret);
+  file_put_contents(CREDENTIALS_PATH, $google_credentials);
+
+  $client = new Google_Client();
+  $client->setApplicationName(APPLICATION_NAME);
+  $client->setScopes(SCOPES);
+  $client->setAuthConfig(CLIENT_SECRET_PATH);
+  $client->setAccessType('offline');
+  $redirectUri = 'https://oauth-redirect.googleusercontent.com/r/core-stronghold-491';
+  $client->setState('1');
+  $client->setRedirectUri($redirectUri);
+
+  // Load previously authorized credentials from a file.
+  $credentialsPath = expandHomeDirectory(CREDENTIALS_PATH);
+  if (file_exists($credentialsPath)) {
+    $accessToken = json_decode(file_get_contents($credentialsPath), true);
+  } else {
+    // Request authorization from the user.
+    $authUrl = $client->createAuthUrl(SCOPES);
+    // printf("Open the following link in your browser:\n%s\n", $authUrl);
+    drupal_goto($authUrl);
+    print 'Enter verification code: ';
+    $authCode = trim(fgets(STDIN));
+
+    // Exchange authorization code for an access token.
+    $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
+
+    // Store the credentials to disk.
+    if(!file_exists(dirname($credentialsPath))) {
+      mkdir(dirname($credentialsPath), 0700, true);
+    }
+    file_put_contents($credentialsPath, json_encode($accessToken));
+    printf("Credentials saved to %s\n", $credentialsPath);
+  }
+  $client->setAccessToken($accessToken);
+
+  // Refresh the token if it's expired.
+  if ($client->isAccessTokenExpired()) {
+
+    // Why is getRefreshToken() returning null?
+    // $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+    $client->fetchAccessTokenWithRefreshToken($accessToken['refresh_token']);
+
+    file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
+  }
+  return $client;
 }
 
 function os_events_gcal_create_calendar() {
 
-  $account_name = variable_get('gauth_account_name', '');
-  $by_name = true;
+  require '../openscholar/libraries/google-api-php-client/vendor/autoload.php';
 
-  $is_authenticated = gauth_account_is_authenticated($account_name, $by_name);
-  if (!$is_authenticated) {
-    drupal_goto('calendar/gauth-account-authenticate');
+  // If modifying these scopes, delete your previously saved credentials
+  // at ~/.credentials/calendar-php-quickstart.json
+  define('SCOPES', implode(' ', array(
+      Google_Service_Calendar::CALENDAR )
+  ));
+
+  # $redirectUri = 'http://localhost:8080/alldone.php';
+  $redirectUri = 'https://oauth-redirect.googleusercontent.com/r/core-stronghold-491';
+
+  /**
+   * Expands the home directory alias '~' to the full path.
+   * @param string $path the path to expand.
+   * @return string the expanded path.
+   */
+  function expandHomeDirectory($path) {
+    $homeDirectory = getenv('HOME');
+    if (empty($homeDirectory)) {
+      $homeDirectory = getenv('HOMEDRIVE') . getenv('HOMEPATH');
+    }
+    return str_replace('~', realpath($homeDirectory), $path);
   }
+
+  // Get the API client and construct the service object.
+  $client = getClient();
+  $client->setRedirectUri($redirectUri);
+
+// Print the next 10 events on the user's calendar.
+  $calendarId = 'primary';
+  $optParams = array(
+    'maxResults' => 10,
+    'orderBy' => 'startTime',
+    'singleEvents' => TRUE,
+    'timeMin' => date('c'),
+  );
+
+  $calendarService = new Google_Service_Calendar($client);
+
+# Create a test calendar
+  $calendar_calendar = new Google_Service_Calendar_Calendar();
+  $calendar_calendar->setDescription("Test 1002 Description");
+  $calendar_calendar->setSummary("Test  1002 Summary");
+  $calendar = $calendarService->calendars->insert($calendar_calendar);
+
+# Create test event and add it to the calendar
+  $event = new Google_Service_Calendar_Event();
+  $dt1 = new DateTime("2017-05-19 05:00:00");
+  $dt2 = new DateTime("2017-05-19 07:00:00");
+  $calendarDateTime = new Google_Service_Calendar_EventDateTime();
+  $calendarDateTime->setDateTime($dt1->format(DateTime::RFC3339));
+  $event->setStart($calendarDateTime);
+  $calendarDateTime->setDateTime($dt2->format(DateTime::RFC3339));
+  $event->setEnd($calendarDateTime);
+  $event->setDescription("Test description");
+  $calendarService->events->insert($calendar->getId(), $event);
+
+  // End of demo code
 
   # Collect calendar info
   $vsite = vsite_get_vsite();
@@ -119,6 +222,7 @@ function os_events_gcal_create_calendar() {
     $view->execute_display($display_id, $args);
   }
 
+  $account_name = variable_get('gauth_account_name', '');
   $cal = gcal_calendar_create($params, $account_name);
 
   foreach ($view->result as $e) {
@@ -364,6 +468,11 @@ function os_events_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('os_events_gcal_create_calendar'),
     'access arguments' => array('administer site configuration'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['gauth/response_handler'] = array(
+    'page callback' => 'os_events_gauth_response_handler',
+    'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
 
@@ -1198,13 +1307,14 @@ function os_events_views_pre_view(&$view, &$display_id, &$args) {
 
       $links[$label] = array(
         'title' => t($label),
-        'href' => $path,
-        'attributes' => array('class' => array(strtolower($label))),
+        'href' => $path
+        # 'attributes' => array('class' => array(strtolower($label)), 'onClick' => "location.href='/evp/calendar/gcal-create-calendar'")
       );
     }
 
     // Make sure webcal link uses webcal protocol.
     $links['subscribe']['href'] = str_replace('http://', 'webcal://', url($links['subscribe']['href'], array('absolute' => TRUE)));
+//    $links['Google']['href'] = "location.href=\'/evp/calendar/gcal-create-calendar\'"; //EAM
 
     $view->attachment_before .= theme('links', array(
       'links' => $links,
@@ -3220,5 +3330,6 @@ function os_events_cp_settings() {
       '#prefix' => '<label></label>',
     ),
   );
+
   return $settings;
 }
