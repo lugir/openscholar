@@ -169,49 +169,32 @@ function os_events_gcal_create_calendar() {
   $client->setRedirectUri($redirectUri);
 
 // Print the next 10 events on the user's calendar.
-  $calendarId = 'primary';
-  $optParams = array(
-    'maxResults' => 10,
-    'orderBy' => 'startTime',
-    'singleEvents' => TRUE,
-    'timeMin' => date('c'),
-  );
+//  $calendarId = 'primary';
+//  $optParams = array(
+//    'maxResults' => 10,
+//    'orderBy' => 'startTime',
+//    'singleEvents' => TRUE,
+//    'timeMin' => date('c'),
+//  );
 
   $calendarService = new Google_Service_Calendar($client);
 
 # Create a test calendar
+  $vsite = vsite_get_vsite();
   $calendar_calendar = new Google_Service_Calendar_Calendar();
-  $calendar_calendar->setDescription("Test 1002 Description");
-  $calendar_calendar->setSummary("Test  1002 Summary");
+  $calendar_calendar->setDescription(isset($vsite->group->field_site_description[LANGUAGE_NONE][0]['safe_value']) ? $vsite->group->field_site_description[LANGUAGE_NONE][0]['safe_value'] : "");
+  $calendar_calendar->setSummary(isset($vsite->group->title) ? $vsite->group->title : "OpenScholar Calendar");
+  $calendar_calendar->setLocation(isset($vsite->group->field_site_address[LANGUAGE_NONE][0]['value']) ? $vsite->group->field_site_address[LANGUAGE_NONE][0]['value'] : "");
   $calendar = $calendarService->calendars->insert($calendar_calendar);
-
-# Create test event and add it to the calendar
-  $event = new Google_Service_Calendar_Event();
-  $dt1 = new DateTime("2017-05-19 05:00:00");
-  $dt2 = new DateTime("2017-05-19 07:00:00");
-  $calendarDateTime = new Google_Service_Calendar_EventDateTime();
-  $calendarDateTime->setDateTime($dt1->format(DateTime::RFC3339));
-  $event->setStart($calendarDateTime);
-  $calendarDateTime->setDateTime($dt2->format(DateTime::RFC3339));
-  $event->setEnd($calendarDateTime);
-  $event->setDescription("Test description");
-  $calendarService->events->insert($calendar->getId(), $event);
 
   // End of demo code
 
   # Collect calendar info
   $vsite = vsite_get_vsite();
-  $calendar_summary     = isset($vsite->group->title) ? $vsite->group->title : "OpenScholar Calendar";
-  $calendar_description = isset($vsite->group->field_site_description[LANGUAGE_NONE][0]['safe_value']) ? $vsite->group->field_site_description[LANGUAGE_NONE][0]['safe_value'] : "";
-  $calendar_location    = isset($vsite->group->field_site_address[LANGUAGE_NONE][0]['value']) ? $vsite->group->field_site_address[LANGUAGE_NONE][0]['value'] : "";
-  $calendar_timezone    = isset($vsite->controllers->variable->values['original']['date_default_timezone']) ? $vsite->controllers->variable->values['original']['date_default_timezone'] : "America/New_York";
-
-  $params = array(
-    'Summary'     => $calendar_summary,
-    'Description' => $calendar_description,
-    'TimeZone'    => $calendar_timezone,
-    'Location'    => $calendar_location,
-  );
+//  $calendar_summary     = ;
+//  $calendar_description =
+//  $calendar_location    = ;
+//  $calendar_timezone    = isset($vsite->controllers->variable->values['original']['date_default_timezone']) ? $vsite->controllers->variable->values['original']['date_default_timezone'] : "America/New_York";
 
   $name = "os_events";
   $display_id = "feed_2";
@@ -222,23 +205,40 @@ function os_events_gcal_create_calendar() {
     $view->execute_display($display_id, $args);
   }
 
-  $account_name = variable_get('gauth_account_name', '');
-  $cal = gcal_calendar_create($params, $account_name);
+//  $account_name = variable_get('gauth_account_name', '');
+//  $cal = gcal_calendar_create($params, $account_name);
 
   foreach ($view->result as $e) {
     $event = array();
-    $event['Description'] = $e->_field_data['nid']['entity']->body[LANGUAGE_NONE][0]['value'];
-    $event['Start']       = $e->_field_data['nid']['entity']->field_date[LANGUAGE_NONE][0]['value'];
-    $event['End']         = $e->_field_data['nid']['entity']->field_date[LANGUAGE_NONE][0]['value2'];
-    $event['Location']    = $e->_field_data['nid']['entity']->field_event_location[LANGUAGE_NONE][0]['value'];
-    $event['Summary']     = $e->_field_data['nid']['entity']->title;
-    $event['Timezone']    = $e->_field_data['nid']['entity']->field_date[LANGUAGE_NONE][0]['timezone'];
+    //    $event['Description'] = ;
+    //    $event['Start']       = $e->_field_data['nid']['entity']->field_date[LANGUAGE_NONE][0]['value'];
+    //    $event['End']         = $e->_field_data['nid']['entity']->field_date[LANGUAGE_NONE][0]['value2'];
+    //    $event['Location']    = $e->_field_data['nid']['entity']->field_event_location[LANGUAGE_NONE][0]['value'];
+    //    $event['Summary']     = $e->_field_data['nid']['entity']->title;
+    //    $event['Timezone']    = $e->_field_data['nid']['entity']->field_date[LANGUAGE_NONE][0]['timezone'];
 
-    $return = gcal_event_create($event, $cal->id, $account_name, $by_name);
+    //    $return = gcal_event_create($event, $cal->id, $account_name, $by_name);
 
-    if (!$return) {
-      drupal_set_message("Couldn't add event to new Google Calendar: " . $event['Description'], 'Error');
-    }
+    # Create test event and add it to the calendar
+    $event = new Google_Service_Calendar_Event();
+    $event->setDescription($e->_field_data['nid']['entity']->body[LANGUAGE_NONE][0]['value']);
+    $event->setLocation($e->_field_data['nid']['entity']->field_event_location[LANGUAGE_NONE][0]['value']);
+    $event->setSummary($e->_field_data['nid']['entity']->title);
+    //    $event->setTimezone?;
+
+    $dt1 = new DateTime($e->_field_data['nid']['entity']->field_date[LANGUAGE_NONE][0]['value']);
+    $dt2 = new DateTime($e->_field_data['nid']['entity']->field_date[LANGUAGE_NONE][0]['value']);
+    $calendarDateTime = new Google_Service_Calendar_EventDateTime();
+    $calendarDateTime->setDateTime($dt1->format(DateTime::RFC3339));
+    $event->setStart($calendarDateTime);
+    $calendarDateTime->setDateTime($dt2->format(DateTime::RFC3339));
+    $event->setEnd($calendarDateTime);
+    $calendarService->events->insert($calendar->getId(), $event);
+
+
+//    if (!$return) {
+//      drupal_set_message("Couldn't add event to new Google Calendar: " . $event['Description'], 'Error');
+//    }
   }
 
   drupal_set_message("Calendar export completed", 'Success');
