@@ -58,34 +58,44 @@ class ContentsRestfulBase extends RestfulEntityBase {
       ),
     );
 
-    $public_fields['alias'] = array(
-      'callback' => array($this, 'getEntityAlias'),
+    $public_fields['link'] = array(
+      'callback' => array($this, 'getEntityLink'),
+    );
+
+    $public_fields['vsite'] = array(
+      'callback' => array($this, 'getEntityVsiteId'),
     );
 
     return $public_fields;
   }
 
   /**
-   * Get entity's alias.
+   * Get entity's link.
    *
    * @param \EntityDrupalWrapper $wrapper
    *   The wrapped entity.
    *
    * @return string
-   *   The alias URL.
+   *   The link URL.
    */
-  protected function getEntityAlias(\EntityDrupalWrapper $wrapper) {
+  protected function getEntityLink(\EntityDrupalWrapper $wrapper) {
+    $values = $wrapper->value();
+    return l(t($values->title), "node/$values->nid");
+  }
 
+  protected function getEntityVsiteId(\EntityDrupalWrapper $wrapper) {
+    
     $values = $wrapper->value();
     //print_r($values);
-    return $values->path['alias'];
+
+    return $values->og_group_ref[LANGUAGE_NONE][0]['target_id'];
   }
 
   protected function dateFormat($timestamp) {
     return format_date($timestamp, $type = 'long');
   }
 
- /* protected function checkEntityAccess($op, $entity_type, $entity) {
+  /*protected function checkEntityAccess($op, $entity_type, $entity) {
     $request = $this->getRequest();
 
     if ($request['vsite']) {
