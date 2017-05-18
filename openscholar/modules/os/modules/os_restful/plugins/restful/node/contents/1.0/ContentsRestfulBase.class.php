@@ -9,7 +9,6 @@ class ContentsRestfulBase extends RestfulEntityBase {
    * @var array
    *  Array keyed by bundle machine, and the RESTful resource as the value.
    */
-
   protected $bundles = array(
     'personal' => 'personal',
     );
@@ -24,7 +23,7 @@ class ContentsRestfulBase extends RestfulEntityBase {
     return $this->bundles;
   }
 
-   /**
+  /**
    * Overrides RestfulEntityBase::getQueryForList().
    */
   public function getQueryForList() {
@@ -62,9 +61,9 @@ class ContentsRestfulBase extends RestfulEntityBase {
       'callback' => array($this, 'getEntityLink'),
     );
 
-    $public_fields['vsite'] = array(
+    /*$public_fields['vsite'] = array(
       'callback' => array($this, 'getEntityVsiteId'),
-    );
+    );*/
 
     return $public_fields;
   }
@@ -83,14 +82,29 @@ class ContentsRestfulBase extends RestfulEntityBase {
     return l(t($values->title), "node/$values->nid");
   }
 
-  protected function getEntityVsiteId(\EntityDrupalWrapper $wrapper) {
-    
+  /**
+   * Get entity's vsite id.
+   *
+   * @param \EntityDrupalWrapper $wrapper
+   *   The wrapped entity.
+   *
+   * @return interger
+   *   vsite id.
+   */
+  /*protected function getEntityVsiteId(\EntityDrupalWrapper $wrapper) {
     $values = $wrapper->value();
-    //print_r($values);
-
     return $values->og_group_ref[LANGUAGE_NONE][0]['target_id'];
-  }
+  }*/
 
+  /**
+   * Get formatted date and time.
+   *
+   * @param timestamp
+   *   The enity's timestamp.
+   *
+   * @return string
+   *   The formatted date.
+   */
   protected function dateFormat($timestamp) {
     return format_date($timestamp, $type = 'long');
   }
